@@ -1,12 +1,9 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-
-
+import { AuthModule } from '../auth/auth.module';
+import { SheetsService } from './services/sheets.service';
 
 @NgModule({
-  declarations: [],
-  imports: [
-    CommonModule
-  ]
+  imports: [AuthModule],
+  providers: [SheetsService]
 })
 export class SheetsModule { }

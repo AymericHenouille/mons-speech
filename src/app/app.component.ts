@@ -1,28 +1,33 @@
 import { Component } from '@angular/core';
-import { Auth, GoogleAuthProvider, UserCredential, signInWithPopup } from '@angular/fire/auth';
+import { AuthService } from './features/auth/services/auth.service';
+import { BrotherService } from './features/data/services/brother.service';
+import { SpeechService } from './features/data/services/speech.service';
 
 @Component({
   selector: 'app-root',
-  template: '<button (click)="login()">Login</button>'
+  template: `
+    <button (click)="login()">Login</button>
+    <button (click)="logout()">Logout</button>
+
+    <pre>{{truc$ | async | json}}</pre>
+  `
 })
 export class AppComponent {
 
+  public truc$ = this.speechService.speechs$;
+
   public constructor(
-    private auth: Auth,
+    private readonly authService: AuthService,
+    private readonly brothersService: BrotherService,
+    private readonly speechService: SpeechService,
   ) { }
 
   public async login(): Promise<void> {
-    const authProvider: GoogleAuthProvider = new GoogleAuthProvider();
-    authProvider.addScope('https://www.googleapis.com/auth/spreadsheets.readonly');
-    const credential: UserCredential | null = await signInWithPopup(this.auth, authProvider);
-    if (credential) {
-      const sheets = google.sheets({ version: 'v4', auth: credential.providerId ?? '' });
-      // const response = await sheets.spreadsheets.values.get({
-      //   spreadsheetId: '1RguIJuPPRJkBwg9t9plm3vQGrNOC5-VShUN8iFMCK7U',
-      //   range: 'B4',
-      // });
-      // console.log(response.data.values);
-    }
+    await this.authService.login();
+  }
+
+  public async logout(): Promise<void> {
+    await this.authService.logout();
   }
 
 }
